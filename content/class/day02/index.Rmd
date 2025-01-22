@@ -1,0 +1,29 @@
+---
+title: "Day 02"
+author: "Jarad Niemi"
+date: "2025-01-22"
+categories: ["Class"]
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+ 
+Find another individual, who is not sitting next to you, and,
+ideally, who you don't know. 
+The less you know the individual the better.
+
+Introduce yourselves by stating your name and your favorite statistics 
+course (STAT 4610X is not an option). 
+
+The categories chosen will be specific to sports analytics. 
+As a reminder, the term *sports* is being used very broadly, 
+i.e. so long as there has been at least one national or international championship
+it will qualify as a sport.
+
+While we play this game, think about each category introduced by the 
+instructor and how you might analyze data arising from that category. 
+Analyses within a category will likely have very similar statistical methods
+used compared to analyses across categories.
+ 
+[Sports Analytics Scattergories](scattergories.html)
