@@ -47,3 +47,16 @@ po/*~
 
 # RStudio Connect folder
 rsconnect/
+
+# Mac files
+.DS_Store
+
+# Windows files
+Thumbs.db
+
+# Hugo files
+.hugo_build.lock
+
+# Netlify
+/public/
+/resources/
