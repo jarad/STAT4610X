@@ -12,6 +12,11 @@ options(width = 20)
 
 ## Scattergories
 
+```{r scattergories-box, echo=FALSE, fig.cap="", out.width = '20%'}
+knitr::include_graphics("scattergories_box.webp")
+knitr::include_graphics("scattergories.jpg")
+```
+
 [Scattergories](https://shop.hasbro.com/en-us/product/classic-scattergories-game-party-game-for-adults-and-teens-ages-13-and-up-board-game-for-2-plus-players/A575A605-E267-4F93-B389-3861C0ACAE8C) was
 publised by Milton Bradley in 1988. 
 
@@ -20,7 +25,7 @@ Each round a category is introduced and a random letter is chosen
 Each team comes up with up to 12 examples in that category that start with the
 chosen letter. 
 One point is awarded if you are the only team to name that example.
-After 6 (or some) number of rounds, the team with the highest score wins. 
+After 6 (or some number of) rounds, the team with the highest score wins. 
 
 ## Random Letters
 
@@ -34,7 +39,7 @@ print(scattergories_letters, quote = FALSE)
 Randomly choose letters:
 
 ```{r random-letters}
-random_letters <- sample(scattergories_letters, 6, replace = FALSE)
+random_letters <- sample(scattergories_letters)
 ```
 
 
@@ -114,10 +119,7 @@ For example,
 
 
 
-Letter: 
-```{r individual-free-for-all-sport-letter}
-random_letters[5]
-```
+Any Letter
 
 ## Category 6 - Team free-for-all sport
 
@@ -126,12 +128,11 @@ pronounced the winner.
 Free-for-all means that teams can play defense on one or more opponents.
 For example,
 
-- 
+- ???
 
 
 
-Letter: 
-```{r team-free-for-all-sport-letter}
-random_letters[6]
-```
+
+
+Any Letter
 
