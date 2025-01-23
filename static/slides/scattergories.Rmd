@@ -2,11 +2,12 @@
 title: "Sports Analytics Scattergories"
 author: "Jarad Niemi"
 date: "2025-01-22"
-output: slidy_presentation
+output: ioslides_presentation
 ---
 
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = TRUE)
+options(width = 20)
 ```
 
 ## Scattergories
@@ -27,7 +28,7 @@ Available letters:
 
 ```{r scattergories-letters}
 scattergories_letters <- LETTERS[-c(17, 21:22, 24:26)]
-scattergories_letters
+print(scattergories_letters, quote = FALSE)
 ```
 
 Randomly choose letters:

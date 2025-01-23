@@ -26,4 +26,4 @@ instructor and how you might analyze data arising from that category.
 Analyses within a category will likely have very similar statistical methods
 used compared to analyses across categories.
  
-[Sports Analytics Scattergories](scattergories.html)
+[Sports Analytics Scattergories](../../slides/scattergories.html)
