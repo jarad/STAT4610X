@@ -38,6 +38,7 @@ set.seed(2)
 \begin{itemize}
 \item Binomial
 \item Poisson
+\item Poisson process
 \item Normal
 \end{itemize}
 
@@ -95,12 +96,14 @@ where $z_{a/2}$ is the z-critical value such that the interval has
 \pause
 In this course, we will just use $2 \approx 1.96$ so that the interval has 
 approximately 95\% (frequentist) probability. 
-\pause
+
+\vspace{0.1in} \pause
+
 But, nobody actually uses this formula. 
 \end{frame}
 
 
-\subsection{Intervals}
+\subsection{R code}
 \begin{frame}[fragile]
 \frametitle{Binomial uncertainty intervals}
 
@@ -156,6 +159,7 @@ Please remember the following properties of a Poisson distribution
 \end{frame}
 
 
+\subsection{Inference}
 \begin{frame}
 \frametitle{Poisson inference}
 When collecting Poisson data, we are interested in making statements about
@@ -169,10 +173,14 @@ A Central Limit Theorem based interval is
 \hat\lambda = \overline{y} = \frac{1}{n} \sum_{i=1}^n y_i, \quad 
 \hat\lambda \pm z_{a/2} \sqrt{\hat\lambda/n}.
 \]
-\pause
+
+\vspace{0.1in} \pause
+
 But, nobody actually uses this formula. 
 \end{frame}
 
+
+\subsection{R code}
 \begin{frame}[fragile]
 \frametitle{Poisson uncertainty intervals}
 
@@ -239,8 +247,6 @@ A Central Limit Theorem based interval is
 \[ 
 y/T \pm z_{a/2} \sqrt{(y/T)/T}.
 \]
-\pause
-But, nobody actually uses this formula. 
 \end{frame}
 
 \begin{frame}[fragile]
@@ -259,7 +265,7 @@ qgamma(c(.025, .975), 1 + y, 1 + t)     # Bayesian credible interval
 These intervals are interpreted \alert{per minute} played. 
 \end{frame}
 
-
+\subsection{R code}
 \begin{frame}[fragile]
 \frametitle{Poisson process per game}
 
@@ -299,11 +305,11 @@ You should recall the following properties of a normal distribution
 
 \end{frame}
 
-% \subsection{Example}
-% \begin{frame}
-% \frametitle{Normal example}
-% \includegraphics{free_throws}
-% \end{frame}
+\subsection{Example}
+\begin{frame}
+\frametitle{Normal example}
+\includegraphics{driving_distance}
+\end{frame}
 
 \subsection{Inference}
 \begin{frame}
@@ -327,11 +333,12 @@ where
 \end{itemize}
 
 \vspace{0.1in} \pause
+
 We do actually use this formula!!
 \end{frame}
 
 
-\subsection{Intervals}
+\subsection{R code}
 \begin{frame}[fragile]
 \frametitle{Normal uncertainty intervals}
 
@@ -346,6 +353,7 @@ n    <- length(y)
 s    <- sd(y)
 
 ybar + c(-1, 1) * 2 * s / sqrt(n) # Approximation using 2
+confint(lm(y ~ 1))                # Exact and Bayesian interval
 t.test(y)$conf.int                # Exact and Bayesian interval    
 @
 
@@ -353,6 +361,7 @@ This is the uncertainty around his mean driving distance.
 \end{frame}
 
 
+\section{Summary}
 \begin{frame}
 \frametitle{Summary}
 The building blocks of many statistical analyses are the following probability
