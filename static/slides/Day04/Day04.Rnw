@@ -116,7 +116,7 @@ phat <- y/n
 phat + c(-1, 1) * 2 * sqrt(phat * (1 - phat) / n) # Introductory statistics
 binom.test(y, n)$conf.int                         # Exact confidence interval
 prop.test( y, n)$conf.int                         # Better approximate interval
-qbeta(c(.025, .975), 1 + y, 1 + n - y)            # Bayesian credible interval
+qbeta(c(.025, .975), 1/2 + y, 1/2 + n - y)        # Bayesian (Jeffreys) credible interval
 @
 \end{frame}
 
@@ -187,13 +187,13 @@ But, nobody actually uses this formula.
 \vspace{-0.15in}
 
 <<>>=
-y         <- c(5,7,8,8,6,1,5,3,3,2,2,6,1,5,6,2,5,6,5,6)
-lambdahat <- mean(y)
-n         <- length(y)
+y         <- c(5,7,8,8,6,1,5,3,3,2,2,6,1,5,6,2,5,6,5,6) # Rounds made in each game
+lambdahat <- mean(y)                                    # Mean rebounds
+n         <- length(y)                                  # Total games
 
 lambdahat + c(-1, 1) * 2 * sqrt(lambdahat / n)      # CLT interval
 exp(confint(glm(y ~ 1, family = "poisson")))        # Poisson regression style
-qgamma(c(.025, .975), 1 + sum(y), 1 + n)            # Bayesian credible interval
+qgamma(c(.025, .975), 1/2 + sum(y), n)              # Bayesian (Jeffreys) credible interval
 @
 
 The interpretation is average rebounds \alert{per game}.
@@ -245,9 +245,38 @@ The most useful statement is an uncertainty interval for $\lambda$.
 A Central Limit Theorem based interval is 
 \pause
 \[ 
-y/T \pm z_{a/2} \sqrt{(y/T)/T}.
+\hat\lambda = y/t,
+\quad
+y/t \pm z_{a/2} \sqrt{(y/t)/t}.
 \]
+
+\pause
+where
+\begin{itemize}
+\item $y$ is the observed total count and
+\item $t$ is the observed total time (or space or space-time). 
+\end{itemize}
 \end{frame}
+
+
+\subsection{R code}
+\begin{frame}[fragile]
+\frametitle{Poisson process uncertainty intervals}
+
+\vspace{-0.15in}
+
+<<>>=
+y <- 92  # Number of rebounds
+t <- 618 # Number of minutes played
+
+y/t + c(-1, 1) * 2 * sqrt(y/t / t)                            # CLT interval
+exp(confint(glm(y ~ 1, offset = log(t), family = "poisson"))) # GLM-based interval
+qgamma(c(.025, .975), 1/2 + y, t)                             # Bayesian (Jeffreys) credible interval
+@
+
+These intervals are interpreted \alert{per minute} played. 
+\end{frame}
+
 
 \begin{frame}[fragile]
 \frametitle{Poisson process uncertainty intervals}
@@ -255,30 +284,16 @@ y/T \pm z_{a/2} \sqrt{(y/T)/T}.
 \vspace{-0.15in}
 
 <<>>=
-y <- 92                                 # Number of rebounds
-t <- 618                                # Number of minutes played
+y <- 92          # Number of rebounds
+t <- 618/40      # Number of 40 minutes, i.e. full game, played
+lambdahat <- y/t
 
-y/t + c(-1, 1) * 2 * sqrt(y/t / t)      # CLT interval
-qgamma(c(.025, .975), 1 + y, 1 + t)     # Bayesian credible interval
+lambdahat + c(-1, 1) * 2 * sqrt(lambdahat / t)                # CLT interval
+exp(confint(glm(y ~ 1, offset = log(t), family = "poisson"))) # GLM-based interval
+qgamma(c(.025, .975), 1/2 + y, t)                             # Bayesian (Jeffreys) credible interval
 @
 
-These intervals are interpreted \alert{per minute} played. 
-\end{frame}
-
-\subsection{R code}
-\begin{frame}[fragile]
-\frametitle{Poisson process per game}
-
-<<>>=
-r <- c(5,7,8,8,6,1,5,3,3,2,2,6,1,5,6,2,5,6,5,6) # Rebounds per game
-y <- sum(y)                                     # Total rebounds
-t <- length(r)                                  # Total games played
-
-y/t + c(-1, 1) * 2 * sqrt(y/t / t)              # CLT interval
-qgamma(c(.025, .975), 1 + y, 1 + t)             # Bayesian credible interval
-@
-
-These intervals are interpreted \alert{per game} played. 
+These intervals are interpreted \alert{per full game} played. 
 \end{frame}
 
 
@@ -311,6 +326,8 @@ You should recall the following properties of a normal distribution
 \includegraphics[width=\textwidth]{driving_distance}
 \end{frame}
 
+
+
 \subsection{Inference}
 \begin{frame}
 \frametitle{Normal inference}
@@ -323,13 +340,14 @@ In introductory statistics courses,
 we teach the confidence interval
 \pause
 \[ 
-\overline{y} \pm z_{a/2}  s / \sqrt{n}
+\hat\mu \pm t_{a/2, n-1}  \hat\sigma / \sqrt{n}
 \]
 \pause 
 where 
 \begin{itemize}
-\item $\overline{y} = \frac{1}{n}\sum_{i=1}^n y_i$ is the sample mean and
-\item $s = \frac{1}{n-1} \sum_{i=1}^n (y_i - \overline{y})^2$ is the sample variance.
+\item $t_{a/2, n-1}$ is the t-critical value with $n-1$ degrees of freedom,  
+\item $\hat\mu = \overline{y} = \frac{1}{n}\sum_{i=1}^n y_i$ is the sample mean and
+\item $\hat\sigma = \frac{1}{n-1} \sum_{i=1}^n (y_i - \overline{y})^2$ is the sample variance.
 \end{itemize}
 
 \vspace{0.1in} \pause
@@ -346,18 +364,19 @@ We do actually use this formula!!
 
 <<>>=
 # Fictitious data that matches Aldritch Potgeiter's driving distance
-y    <- rnorm(12, mean = 0, sd = 20) 
-y    <- y - mean(y) + 328.7
-ybar <- mean(y)
-n    <- length(y)
-s    <- sd(y)
+y        <- rnorm(12, mean = 0, sd = 20) 
+y        <- y - mean(y) + 328.7
+muhat    <- mean(y)                      # sample mean
+n        <- length(y)                    # number of observations
+sigmahat <- sd(y)                        # sample standard deviation
 
-ybar + c(-1, 1) * 2 * s / sqrt(n) # Approximation using 2
-confint(lm(y ~ 1))                # Exact and Bayesian interval
-t.test(y)$conf.int                # Exact and Bayesian interval    
+# All intervals are exact confidence and Bayesian credible intervals
+muhat + c(-1, 1) * qt(0.975, df = n - 1) * sigmahat / sqrt(n) 
+confint(lm(y ~ 1))                           
+t.test(y)$conf.int                            
 @
 
-This is the uncertainty around his mean driving distance.
+This is the uncertainty around his \alert{mean} driving distance.
 \end{frame}
 
 
