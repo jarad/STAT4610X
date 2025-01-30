@@ -5,3 +5,4 @@ title: Class
 
 - [Day 01](day01)
 - [Day 02](day02)
+- [Day 04](day04)
