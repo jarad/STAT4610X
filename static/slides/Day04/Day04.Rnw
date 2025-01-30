@@ -74,7 +74,7 @@ You should recall the following properties of a binomial distribution
 \subsection{Example}
 \begin{frame}
 \frametitle{Binomial example}
-\includegraphics{free_throws}
+\includegraphics[width=\textwidth]{free_throws}
 \end{frame}
 
 \subsection{Inference}
@@ -308,7 +308,7 @@ You should recall the following properties of a normal distribution
 \subsection{Example}
 \begin{frame}
 \frametitle{Normal example}
-\includegraphics{driving_distance}
+\includegraphics[width=\textwidth]{driving_distance}
 \end{frame}
 
 \subsection{Inference}
@@ -323,7 +323,7 @@ In introductory statistics courses,
 we teach the confidence interval
 \pause
 \[ 
-\overline{y} \pm z_{a/2} \times s / \sqrt{n}
+\overline{y} \pm z_{a/2}  s / \sqrt{n}
 \]
 \pause 
 where 
@@ -374,7 +374,7 @@ distributions:
 
 \vspace{0.1in} \pause
 
-In this slide set, we introduced some basic uncertainty intervals for using
+In this slide set, we introduced some uncertainty intervals for using
 data to make statements about parameters in these models.
 \end{frame}
 
