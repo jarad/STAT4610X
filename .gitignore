@@ -60,3 +60,15 @@ Thumbs.db
 # Netlify
 /public/
 /resources/
+
+# LaTeX auxiliary files
+*.log
+*.nav
+*.tex
+*.snm
+*.synctex.gz
+*.toc
+*.vrb
+
+# knitr folders
+cache/

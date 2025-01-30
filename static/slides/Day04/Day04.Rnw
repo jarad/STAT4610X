@@ -1,0 +1,372 @@
+\documentclass[aspectratio=169,handout]{beamer}
+
+\input{../frontmatter}
+\input{../commands}
+
+\title{Introductory Statistics}
+
+\begin{document}
+
+%\section{Temp??} \begin{comment}
+
+<<options, results='hide', echo=FALSE, purl=FALSE>>=
+opts_chunk$set(comment=NA, 
+               fig.width=5, fig.height=3, 
+               size='scriptsize', 
+               out.width='0.8\\textwidth', 
+               fig.align='center', 
+               message=FALSE,
+               echo=TRUE,
+               cache=FALSE)
+options(width=120)
+@
+
+<<libraries, message=FALSE, warning=FALSE, cache=FALSE, echo=FALSE>>=
+library("tidyverse"); theme_set(theme_bw())
+library("gridExtra")
+@
+
+<<set-seed, echo=FALSE>>=
+set.seed(2)
+@
+
+\frame{\titlepage}
+
+\begin{frame}
+\frametitle{Outline}
+
+\begin{itemize}
+\item Binomial
+\item Poisson
+\item Normal
+\end{itemize}
+
+\end{frame}
+
+
+
+\section{Binomial}
+\begin{frame}
+\frametitle{Binomial}
+
+A binomial random variable $Y$ is the count of the number of successes out 
+of $n$ attempts where each attempt is 
+\begin{itemize}
+\item independent and
+\item has a probability of success $\pi$. 
+\end{itemize}
+\pause
+We write
+\[ 
+Y \sim Bin(n,\pi).
+\]
+\pause
+You should recall the following properties of a binomial distribution
+\begin{itemize}
+\item $Im[Y] = \pause \{0,1, 2, \ldots, n\}$, \pause
+\item $E[Y] = \pause n\pi$, \pause and
+\item $Var[Y] = \pause n\pi(1-\pi)$.
+\end{itemize}
+
+\end{frame}
+
+\subsection{Example}
+\begin{frame}
+\frametitle{Binomial example}
+\includegraphics{free_throws}
+\end{frame}
+
+\subsection{Inference}
+\begin{frame}
+\frametitle{Binomial inference}
+When collecting binomial data, we are interested in making statements about
+the probability of success $\pi$. 
+\pause
+The most useful statement is an uncertainty interval for $\pi$. 
+\pause
+In introductory statistics courses, 
+we teach a confidence interval based on the Central Limit Theorem:
+\pause
+\[ 
+\hat\pi = y/n, \quad \hat\pi \pm z_{a/2} \sqrt{\hat\pi(1-\hat\pi)/n}.
+\]
+where $z_{a/2}$ is the z-critical value such that the interval has 
+(frequentist) probability of $a$ to contain the true value $\pi$. 
+\pause
+In this course, we will just use $2 \approx 1.96$ so that the interval has 
+approximately 95\% (frequentist) probability. 
+\pause
+But, nobody actually uses this formula. 
+\end{frame}
+
+
+\subsection{Intervals}
+\begin{frame}[fragile]
+\frametitle{Binomial uncertainty intervals}
+
+\vspace{-0.15in}
+
+<<>>=
+y    <- 54
+n    <- 66
+phat <- y/n
+phat + c(-1, 1) * 2 * sqrt(phat * (1 - phat) / n) # Introductory statistics
+binom.test(y, n)$conf.int                         # Exact confidence interval
+prop.test( y, n)$conf.int                         # Better approximate interval
+qbeta(c(.025, .975), 1 + y, 1 + n - y)            # Bayesian credible interval
+@
+\end{frame}
+
+
+
+\section{Poisson}
+\begin{frame}
+\frametitle{Poisson distribution}
+
+A Poisson random variable $Y$ is the count of the number of successes where
+there is no clear upper maximum.
+\pause
+The count is typically over some time, space, or space-time. 
+\pause
+We write
+\[ 
+Y_i \ind Po(\lambda).
+\]
+where $\lambda$ is the rate of occurrence and $ind$ indicates that each 
+observation ($i$) is independent.
+\pause
+Please remember the following properties of a Poisson distribution
+\begin{itemize}
+\item $Im[Y_i] = \pause \{0,1, 2, \ldots\}$, \pause
+\item $E[Y_i] = \pause \lambda$, \pause and
+\item $Var[Y_i] = \pause \lambda$.
+\end{itemize}
+
+\end{frame}
+
+
+
+
+
+
+\subsection{Example}
+\begin{frame}
+% \frametitle{Poisson example}
+\includegraphics[height=\textheight]{CurtisJones_gamelog}
+\end{frame}
+
+
+\begin{frame}
+\frametitle{Poisson inference}
+When collecting Poisson data, we are interested in making statements about
+the rate $\lambda$. 
+\pause
+The most useful statement is an uncertainty interval for $\lambda$. 
+\pause
+A Central Limit Theorem based interval is 
+\pause
+\[ 
+\hat\lambda = \overline{y} = \frac{1}{n} \sum_{i=1}^n y_i, \quad 
+\hat\lambda \pm z_{a/2} \sqrt{\hat\lambda/n}.
+\]
+\pause
+But, nobody actually uses this formula. 
+\end{frame}
+
+\begin{frame}[fragile]
+\frametitle{Poisson uncertainty intervals}
+
+\vspace{-0.15in}
+
+<<>>=
+y         <- c(5,7,8,8,6,1,5,3,3,2,2,6,1,5,6,2,5,6,5,6)
+lambdahat <- mean(y)
+n         <- length(y)
+
+lambdahat + c(-1, 1) * 2 * sqrt(lambdahat / n)      # CLT interval
+exp(confint(glm(y ~ 1, family = "poisson")))        # Poisson regression style
+qgamma(c(.025, .975), 1 + sum(y), 1 + n)            # Bayesian credible interval
+@
+
+The interpretation is average rebounds \alert{per game}.
+\end{frame}
+
+
+
+\section{Poisson process}
+\begin{frame}
+\frametitle{Poisson process}
+
+A Poisson process is a random variable $Y$ is the count of the number of successes
+over some amount of time, space, or space-time ($T$). 
+\pause
+We write
+\[ 
+Y \ind Po(\lambda  T).
+\]
+where $\lambda$ is the rate of occurrence.
+\pause
+Please remember the following properties of a Poisson distribution
+\begin{itemize}
+\item $Im[Y] = \pause \{0,1, 2, \ldots\}$, \pause
+\item $E[Y] = \pause \lambda T$, \pause and
+\item $Var[Y] = \pause \lambda  T$.
+\end{itemize}
+
+\end{frame}
+
+
+
+
+
+
+\subsection{Example}
+\begin{frame}
+\frametitle{Poisson process example}
+\includegraphics[width = \textwidth]{rebounds}
+\end{frame}
+
+\subsection{Inference}
+\begin{frame}
+\frametitle{Poisson process inference}
+When collecting Poisson process data, we are interested in making statements about
+the rate $\lambda$. 
+\pause
+The most useful statement is an uncertainty interval for $\lambda$. 
+\pause
+A Central Limit Theorem based interval is 
+\pause
+\[ 
+y/T \pm z_{a/2} \sqrt{(y/T)/T}.
+\]
+\pause
+But, nobody actually uses this formula. 
+\end{frame}
+
+\begin{frame}[fragile]
+\frametitle{Poisson process uncertainty intervals}
+
+\vspace{-0.15in}
+
+<<>>=
+y <- 92                                 # Number of rebounds
+t <- 618                                # Number of minutes played
+
+y/t + c(-1, 1) * 2 * sqrt(y/t / t)      # CLT interval
+qgamma(c(.025, .975), 1 + y, 1 + t)     # Bayesian credible interval
+@
+
+These intervals are interpreted \alert{per minute} played. 
+\end{frame}
+
+
+\begin{frame}[fragile]
+\frametitle{Poisson process per game}
+
+<<>>=
+r <- c(5,7,8,8,6,1,5,3,3,2,2,6,1,5,6,2,5,6,5,6) # Rebounds per game
+y <- sum(y)                                     # Total rebounds
+t <- length(r)                                  # Total games played
+
+y/t + c(-1, 1) * 2 * sqrt(y/t / t)              # CLT interval
+qgamma(c(.025, .975), 1 + y, 1 + t)             # Bayesian credible interval
+@
+
+These intervals are interpreted \alert{per game} played. 
+\end{frame}
+
+
+
+
+\section{Normal}
+\begin{frame}
+\frametitle{Normal}
+
+A normal random variable $Y$ is a continuous random variable 
+\pause
+We write
+\[ 
+Y_i \ind N(\mu, \sigma^2).
+\]
+with mean $\mu$ and variance $\sigma^2$ (or standard deviation $\sigma$).
+\pause
+You should recall the following properties of a normal distribution
+\begin{itemize}
+\item $Im[Y_i] = \pause (-\infty, \infty) = \mathbb{R}$, \pause
+\item $E[Y_i] = \pause \mu$, \pause and
+\item $Var[Y] = \pause \sigma^2$.
+\end{itemize}
+
+\end{frame}
+
+% \subsection{Example}
+% \begin{frame}
+% \frametitle{Normal example}
+% \includegraphics{free_throws}
+% \end{frame}
+
+\subsection{Inference}
+\begin{frame}
+\frametitle{Normal inference}
+When collecting normal data, we are (typically) interested in making statements
+about the mean $\mu$. 
+\pause
+The most useful statement is an uncertainty interval for $\mu$. 
+\pause
+In introductory statistics courses, 
+we teach the confidence interval
+\pause
+\[ 
+\overline{y} \pm z_{a/2} \times s / \sqrt{n}
+\]
+\pause 
+where 
+\begin{itemize}
+\item $\overline{y} = \frac{1}{n}\sum_{i=1}^n y_i$ is the sample mean and
+\item $s = \frac{1}{n-1} \sum_{i=1}^n (y_i - \overline{y})^2$ is the sample variance.
+\end{itemize}
+
+\vspace{0.1in} \pause
+We do actually use this formula!!
+\end{frame}
+
+
+\subsection{Intervals}
+\begin{frame}[fragile]
+\frametitle{Normal uncertainty intervals}
+
+\vspace{-0.15in}
+
+<<>>=
+# Fictitious data that matches Aldritch Potgeiter's driving distance
+y    <- rnorm(12, mean = 0, sd = 20) 
+y    <- y - mean(y) + 328.7
+ybar <- mean(y)
+n    <- length(y)
+s    <- sd(y)
+
+ybar + c(-1, 1) * 2 * s / sqrt(n) # Approximation using 2
+t.test(y)$conf.int                # Exact and Bayesian interval    
+@
+
+This is the uncertainty around his mean driving distance.
+\end{frame}
+
+
+\begin{frame}
+\frametitle{Summary}
+The building blocks of many statistical analyses are the following probability
+distributions:
+\begin{itemize}
+\item Binomial (count with a known upper maximum)
+\item Poisson (count with no known upper maximum)
+\item Normal (not a count)
+\end{itemize}
+
+\vspace{0.1in} \pause
+
+In this slide set, we introduced some basic uncertainty intervals for using
+data to make statements about parameters in these models.
+\end{frame}
+
+\end{document}
