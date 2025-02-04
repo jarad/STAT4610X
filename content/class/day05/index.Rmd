@@ -1,0 +1,35 @@
+---
+title: "Day 05"
+author: "Jarad Niemi"
+date: "2025-02-04"
+categories: ["Class"]
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+We'll start talking about regression models. 
+First we will do an activity to suggest variables that could be modeled using
+a regression analysis. 
+The activity will require students to identify a response variable, 
+the appropriate distribution for the response variable 
+(binomial, Poisson, and normal), and a 
+brainstorm of what explanatory variables would affect the distribution of the 
+response variable.
+
+The main purpose of this activity is to get you to start thinking about what type
+of regression model you will need to use. 
+The type of regression model will depend on the type of response variable:
+
+- binomial -> logistic regression
+- Poisson -> Poisson regression
+- normal -> (linear) regression
+
+The secondary purpose of this activity is to get you to start brainstorming
+what type of explanatory variables would affect the distribution of the response.
+These explanatory variables should be both measurable and have a relatively
+large effect on the distribution of the response.
+
+ 
+[Probability Distributions](../../slides/Day05/Day05.pdf)

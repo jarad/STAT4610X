@@ -1,0 +1,204 @@
+\documentclass[aspectratio=169,handout]{beamer}
+
+\input{../frontmatter}
+\input{../commands}
+
+\title{Linear Regression}
+
+\begin{document}
+
+%\section{Temp??} \begin{comment}
+
+<<options, results='hide', echo=FALSE, purl=FALSE>>=
+opts_chunk$set(comment=NA, 
+               fig.width=6.5, fig.height=3, 
+               size='scriptsize', 
+               out.width='0.8\\textwidth', 
+               fig.align='center', 
+               message=FALSE,
+               echo=TRUE,
+               cache=FALSE)
+options(width=120)
+@
+
+<<libraries, message=FALSE, warning=FALSE, cache=FALSE, echo=FALSE>>=
+library("tidyverse"); theme_set(theme_bw())
+library("ggResidpanel")
+@
+
+<<set-seed, echo=FALSE>>=
+set.seed(2)
+@
+
+\frame{\titlepage}
+
+\begin{frame}
+\frametitle{Outline}
+
+\begin{itemize}
+\item Simple Linear Regression (SLR)
+  \begin{itemize}
+  \item Model
+  \item Interpretation
+  \item Assumptions
+  \item Diagnostics
+  \item Example
+  \end{itemize}
+% \item Multiple Linear Regression (MLR)
+% \item MLR Analysis
+\end{itemize}
+
+\end{frame}
+
+
+
+\section{Simple Linear Regression}
+\subsection{Model}
+\begin{frame}
+\frametitle{Simple Linear Regression}
+
+For observation $i$, let
+\begin{itemize}
+\item $Y_i$ be the response variable and
+\item $X_i$ be the explanatory variable.
+\end{itemize}
+
+\pause
+
+The simple linear regression model (SLR) assumes
+\[ 
+Y_i \ind N(\beta_0 + \beta_1 X_i, \sigma^2)
+\]
+\pause
+or, equivalently,
+\[ 
+Y_i = \beta_0 + \beta_1 X_i + \epsilon_i, \quad \epsilon_i \ind N(0, \sigma^2).
+\]
+
+\end{frame}
+
+
+
+\subsection{Interpretation}
+\begin{frame}
+\frametitle{Interpretation}
+
+Recall
+\[ 
+E[Y_i] = \beta_0 + \beta_1 X_i
+\]
+
+\vspace{0.1in} \pause
+
+Thus,
+\begin{itemize}
+\item $\beta_0$ is the expected response when $X_i=0$ \pause
+\item $\beta_1$ is the expected increase in the response when $X_i$ is increased by 1.
+\end{itemize}
+
+\end{frame}
+
+
+\subsection{Assumptions}
+\begin{frame}
+\frametitle{Assumptions}
+
+Recall
+\[ 
+E[Y_i] = \beta_0 + \beta_1 X_i, \quad \epsilon_i \ind N(0, \sigma^2)
+\]
+
+\vspace{0.1in} \pause
+
+Thus, the model assumptions are \pause
+\begin{itemize}
+\item The errors are normally distributed.
+\item The errors have constant variance.
+\item The errors are independent.
+\item The relationship between the expected response and the explanatory variable
+is a straight line. 
+\end{itemize}
+
+\end{frame}
+
+
+\subsection{Diagnostics}
+\begin{frame}[fragile]
+\frametitle{Diagnostics}
+
+To evaluate these model assumptions we utilize diagnostic plots:
+<<regression-diagnostics, echo=TRUE>>=
+m <- lm(Sepal.Length ~ Sepal.Width, data = iris)
+ggResidpanel::resid_panel(m, plots = c("resid", "qq", "cookd"), qqbands = TRUE, nrow = 1)
+@
+
+\end{frame}
+
+
+\subsection{Example}
+\begin{frame}[fragile]
+\frametitle{Triathlon Data}
+\scriptsize{from \url{https://modules.scorenetwork.org/triathlons/ironman-lakeplacid-mlr/}}
+
+<<>>=
+d <- read_csv("ironman_lake_placid_female_2022_canadian.csv")
+head(d)
+@
+\end{frame}
+
+
+\begin{frame}[fragile]
+\frametitle{Bike Time v Swim Time}
+<<triathlon-data-plot>>=
+ggplot(d |> filter(Swim.Time < 500), aes(x = Swim.Time, y = Bike.Time)) + geom_point()
+@
+\end{frame}
+
+\begin{frame}[fragile]
+\frametitle{Bike Time v Swim Time - Model Diagnostics}
+<<triathlon-model-diagnostics>>=
+m <- lm(Bike.Time ~ Swim.Time, data = d |> filter(Swim.Time < 500))
+ggResidpanel::resid_panel(m, plots = c("resid", "qq", "cookd"), qqbands = TRUE, nrow = 1)
+@
+\end{frame}
+
+
+\begin{frame}[fragile]
+\frametitle{Bike Time v Swim Time - Model Results}
+
+\vspace{-0.1in}
+
+<<triathlon-model-summary>>=
+summary(m)
+@
+\end{frame}
+
+
+\begin{frame}[fragile]
+\frametitle{Bike Time v Swim Time - Written Results}
+<<>>=
+cbind(coef(m), confint(m))
+summary(m)$r.squared
+@
+
+When swim time is 0, the expected Bike Time is 
+\Sexpr{round(coef(m)[1])} mins with a 95\% interval of 
+(\Sexpr{round(confint(m)[1,1])}, \Sexpr{round(confint(m)[1,2])}).
+For additional minute of swim time, 
+the bike time is expected to increase 
+\Sexpr{round(coef(m)[2],1)} mins  
+(\Sexpr{round(confint(m)[2,1],1)}, \Sexpr{round(confint(m)[2,2],1)}).
+The model explains \Sexpr{round(100*summary(m)$r.squared)}\% of the variability
+in bike time.
+\end{frame}
+
+
+\begin{frame}[fragile]
+\frametitle{Bike Time v Swim Time - Plot}
+<<triathlon-data-plot-w-line>>=
+ggplot(d |> filter(Swim.Time < 500), aes(x = Swim.Time, y = Bike.Time)) + 
+  geom_point() + geom_smooth(method = "lm")
+@
+\end{frame}
+
+\end{document}
