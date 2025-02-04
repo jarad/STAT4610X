@@ -32,4 +32,4 @@ These explanatory variables should be both measurable and have a relatively
 large effect on the distribution of the response.
 
  
-[Probability Distributions](../../slides/Day05/Day05.pdf)
+[Simple Linear Regression](../../slides/Day05/Day05.pdf)
