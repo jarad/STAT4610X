@@ -43,9 +43,15 @@ set.seed(2)
   \item Assumptions
   \item Diagnostics
   \item Example
+  \item Two-sample T-test
   \end{itemize}
-% \item Multiple Linear Regression (MLR)
-% \item MLR Analysis
+\item Multiple Linear Regression (MLR)
+  \begin{itemize}  \item Model
+  \item Interpretation
+  \item Assumptions
+  \item Diagnostics
+  \item Examples
+  \end{itemize}
 \end{itemize}
 
 \end{frame}
@@ -57,7 +63,7 @@ set.seed(2)
 \begin{frame}
 \frametitle{Simple Linear Regression}
 
-For observation $i$, let
+For observation $i = \{1,2,\ldots,\}$, let
 \begin{itemize}
 \item $Y_i$ be the response variable and
 \item $X_i$ be the explanatory variable.
@@ -112,9 +118,9 @@ E[Y_i] = \beta_0 + \beta_1 X_i, \quad \epsilon_i \ind N(0, \sigma^2)
 
 Thus, the model assumptions are \pause
 \begin{itemize}
-\item The errors are normally distributed.
-\item The errors have constant variance.
 \item The errors are independent.
+\item The errors are normally distributed.
+\item The errors have constant variance. \pause
 \item The relationship between the expected response and the explanatory variable
 is a straight line. 
 \end{itemize}
@@ -199,6 +205,370 @@ in bike time.
 ggplot(d |> filter(Swim.Time < 500), aes(x = Swim.Time, y = Bike.Time)) + 
   geom_point() + geom_smooth(method = "lm")
 @
+\end{frame}
+
+
+\subsection{Two-sample T-test}
+\begin{frame}
+\frametitle{Comparing two groups}
+
+We can use SLR to compare two groups. 
+\pause
+Note that 
+\[ 
+Y_i \ind N(\mu_{g[i]}, \sigma^2) 
+\]
+where $g[i] \in \{1,2\}$ determines the group membership for observation $i$
+\pause
+is equivalent to 
+\[ 
+Y_i \ind N(\beta_0 + \beta_1 \I(g[i] = 2), \sigma^2) 
+\]
+where $\I(g[i] = 2)$ is the indicator function, \pause i.e.
+\[
+I(A) = \left\{ 
+\begin{array}{ll}
+1 & A\mbox{ is TRUE} \\
+0 & \mbox{otherwise}
+\end{array}
+\right.
+\]
+% \pause i.e. $I(A) = 1$ if $A$ is true and $I(A) = 0$ otherwise,
+\pause
+and
+\[
+\mu_1 = \beta_0 \quad \mbox{and} \quad \mu_2 = \beta_0 + \beta_1.
+\]
+\end{frame}
+
+\begin{frame}[fragile]
+\frametitle{Comparing Bike Times for Two Age Divisions}
+<<>>=
+d2 <- d |> filter(Division %in% c("F40-44", "F45-49"))
+
+d2 |>
+  group_by(Division) |>
+  summarize(
+    n = n(),
+    mean = mean(Bike.Time),
+    sd = sd(Bike.Time)
+  )
+@
+\end{frame}
+
+
+\begin{frame}[fragile]
+\frametitle{Plotting Bike Times for Two Age Divisions}
+<<>>=
+ggplot(d2, aes(x = Division, y = Bike.Time)) + 
+  geom_boxplot(outliers = FALSE, color = "gray") + geom_jitter(width = 0.1)
+@
+\end{frame}
+
+
+\begin{frame}[fragile]
+\frametitle{Modeling Bike Time by Two Age Divisions}
+
+\vspace{-0.1in}
+
+<<>>=
+m <- lm(Bike.Time ~ Division, data = d2)
+summary(m)
+@
+\end{frame}
+
+
+
+
+\begin{frame}[fragile]
+\frametitle{Two-sample T-test}
+<<>>=
+cbind(coef(m), confint(m))
+t.test(Bike.Time ~ Division, data = d2, var.equal = TRUE)
+@
+\end{frame}
+
+
+\section{Multiple (Linear) Regression}
+\subsection{Model}
+\begin{frame}
+\frametitle{(Multiple Linear) Regression}
+
+For observation $i = \{1,2,\ldots,n \}$, let
+\begin{itemize}
+\item $Y_i$ be the value of the response variable and
+\item $X_{i,j}$ be value of the $j$th explanatory variable 
+\end{itemize}
+
+\vspace{0.1in} \pause
+
+The (multiple linear) regression model  assumes
+\[ 
+Y_i = \beta_0 + \beta_1 X_{i,1} + \beta_2 X_{i,2} + \cdots + \beta_p X_{i,p} + \epsilon_i
+\]
+
+\vspace{0.1in} \pause
+
+and 
+\[
+\epsilon_i \ind N(0, \sigma^2).
+\]
+
+\end{frame}
+
+
+
+\subsection{Interpretation}
+\begin{frame}
+\frametitle{Interpretation}
+
+Recall
+\[
+E[Y_i] = \beta_0 + \beta_1 X_{i,1} + \beta_2 X_{i,2} + \cdots + \beta_p X_{i,p}
+\]
+
+\vspace{0.1in} \pause
+
+Thus,
+\begin{itemize}
+\item $\beta_0$ is the expected response when all $X_{i,j} = 0$ \pause
+\item $\beta_j$ is the expected increase in the response when $X_{i,j}$ is increased by 1 and all other explanatory variables are held constant
+\end{itemize}
+
+\vspace{0.1in }\pause
+
+When multiple regression is used, 
+you will often see people write the phrases
+``after controlling for'' or ``after adjusting for'' followed by a list of 
+the other explanatory variables in the model.
+
+\end{frame}
+
+
+\subsection{Assumptions}
+\begin{frame}
+\frametitle{Assumptions}
+
+Recall
+\[
+E[Y_i] = \beta_0 + \beta_1 X_{i,1} + \beta_2 X_{i,2} + \cdots + \beta_p X_{i,p}, \quad \epsilon_i \ind N(0, \sigma^2)
+\]
+
+\vspace{0.1in} \pause
+
+Thus, the model assumptions are \pause
+\begin{itemize}
+\item The errors are independent.
+\item The errors are normally distributed.
+\item The errors have constant variance. \pause
+\item The relationship between the expected response and the explanatory variables is given above.
+\end{itemize}
+
+\end{frame}
+
+
+\subsection{Diagnostics}
+\begin{frame}[fragile]
+\frametitle{Diagnostics}
+
+To evaluate these model assumptions we utilize diagnostic plots:
+<<multiple-regression-diagnostics, echo=TRUE>>=
+m <- lm(Run.Time ~ Swim.Time + Bike.Time, data = d |> filter(Swim.Time < 500))
+ggResidpanel::resid_panel(m, plots = c("resid", "qq", "cookd"), qqbands = TRUE, nrow = 1)
+@
+
+\end{frame}
+
+
+\begin{frame}[fragile]
+\frametitle{Diagnostics}
+
+To evaluate the need for a quadratic term:
+<<multiple-regression-xpanel, echo=TRUE>>=
+m <- lm(Run.Time ~ Swim.Time + Bike.Time, data = d |> filter(Swim.Time < 500))
+ggResidpanel::resid_xpanel(m)
+@
+
+\end{frame}
+
+
+
+\subsection{Example}
+\begin{frame}[fragile]
+
+<<>>=
+summary(m)
+@
+
+\end{frame}
+
+
+\begin{frame}[fragile]
+\frametitle{Run Time Plots}
+
+<<>>=
+ggplot(d |> filter(Swim.Time < 500),
+       aes(x = Swim.Time, y = Run.Time, color = Bike.Time)) +
+  geom_point()
+@
+
+\end{frame}
+
+
+\begin{frame}[fragile]
+\frametitle{Run Time Plots}
+
+<<>>=
+ggplot(d |> filter(Swim.Time < 500),
+       aes(x = Bike.Time, y = Run.Time, color = Swim.Time)) +
+  geom_point()
+@
+
+\end{frame}
+
+
+\begin{frame}[fragile]
+\frametitle{Written Summary}
+
+\vspace{-0.1in}
+
+<<>>=
+cbind(coef(m), confint(m))
+summary(m)$r.squared
+@
+
+\vspace{0.1in}
+
+Using the 2022 Women's Lake Placid Ironman data, 
+we fit a regression model using run time as the response variable and 
+swim and bike times as the explanatory variables. 
+After adjusting for bike time, each minute increase of swim time was 
+associated with a \Sexpr{round(coef(m)[2],2)} minute increase in run time with a 
+95\% interval of 
+(\Sexpr{round(confint(m)[2,1],2)}, \Sexpr{round(confint(m)[2,2],2)}).
+After adjusting for swim time, each minute increase of bike time was 
+associated with a \Sexpr{round(coef(m)[3],2)} 
+(\Sexpr{round(confint(m)[3,1],2)}, \Sexpr{round(confint(m)[3,2],2)})
+minute increase in run time.
+The model with swim and bike time accounted for 
+\Sexpr{round(100*summary(m)$r.squared)}\% of the variability in run time.
+
+\end{frame}
+
+
+\section{ANOVA}
+\begin{frame}
+\frametitle{ANOVA}
+
+When our explanatory variable is categorical with more than 2 levels, 
+we can fit a regression model that will often be referred to as an ANOVA model. 
+
+\vspace{0.1in} \pause
+
+To fit this model, we do the following
+\begin{enumerate}
+\item Choose one level to be the reference level 
+(by default R will choose the level that comes first alphabetically) \pause
+\item Create indicator variables for all the other levels, i.e. 
+\[ 
+\I(\mbox{level for observation $i$ is $<$level$>$}) = \left\{
+\begin{array}{ll}
+1 & \mbox{if level for observation $i$ is $<$level$>$} \\
+0 & \mbox{otherwise}
+\end{array} \right. \pause
+\] 
+\item Fit a regression model using these indicators.
+\end{enumerate}
+
+\vspace{0.1in} \pause
+
+Most statistical software will perform these actions for you, 
+but it is useful to know this is what is happening.
+
+\end{frame}
+
+
+\subsection{Example}
+\begin{frame}[fragile]
+\frametitle{Run Time by Age Group}
+<<>>=
+d |> group_by(Division) |> 
+  summarize(
+    n    = n(),
+    mean = mean(Run.Time),
+    sd   = sd(Run.Time)
+  )
+@
+\end{frame}
+
+
+\begin{frame}[fragile]
+\frametitle{Run Time by Division}
+
+\vspace{-0.1in}
+
+<<>>=
+ggplot(d |> filter(Division != "FPRO"),
+       aes(x = Division, y = Run.Time)) +
+  geom_boxplot(outliers = FALSE, color = "gray") +
+  geom_jitter(width = 0.1)
+@
+\end{frame}
+
+
+\begin{frame}[fragile]
+<<triathlon-regression-runtime-division>>=
+m <- lm(Run.Time ~ Division, data = d |> filter(Division != "FPRO"))
+summary(m)
+@
+\end{frame}
+
+
+\begin{frame}[fragile]
+\frametitle{F-test}
+When evaluating the statistical support for including a categorical variable
+with more than 2 levels, we use an F-test. \pause
+If this variable is the only variable in the model, 
+we can use 
+
+<<anova-drop1>>=
+anova(m)
+drop1(m, test = "F")
+@
+\end{frame}
+
+\begin{frame}[fragile]
+\frametitle{ANOVA F-test}
+Alternatively, and more generally, we can fit a model with and without the
+variable of interest and compare the two models:
+
+<<anova>>=
+m0 <- lm(Run.Time ~ 1, data = d |> filter(Division != "FPRO"))
+anova(m0, m)
+@
+\end{frame}
+
+\subsection{Interpretation}
+\begin{frame}[fragile]
+\frametitle{Interpretation}
+
+<<>>=
+cbind(coef(m)[c(1,3)], confint(m)[c(1,3),]) # divide by 60 to get hours
+summary(m)$r.squared
+@
+
+Using the 2022 Women's Lake Placid Ironman data, 
+we fit a regression model using run time as the response variable and 
+age division as the explanatory variable. 
+The mean run time for the F25-29 division was 
+\Sexpr{round(coef(m)[1] / 60, 1)} hours with a 95\% interval of 
+(\Sexpr{round(confint(m)[1, 1] / 60, 1)}, \Sexpr{round(confint(m)[1, 2] / 60, 1)}).
+The estimated difference in run time for the F25-29 division minus the F35-39 
+division was
+\Sexpr{round(-coef(m)[3])} 
+(\Sexpr{round(-confint(m)[3, 2])}, \Sexpr{round(-confint(m)[3, 1])}) minutes.
+The model with division accounted for 
+\Sexpr{round(100*summary(m)$r.squared)}\% of the variability in run time.
 \end{frame}
 
 \end{document}

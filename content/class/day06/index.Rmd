@@ -1,0 +1,20 @@
+---
+title: "Day 06"
+author: "Jarad Niemi"
+date: "2025-02-06"
+categories: ["Class"]
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+We'll continue talking about linear regression models, 
+but now we'll add additional explanatory variables. 
+Thus, we move into multiple linear regression models,
+although most people will just use the term regression. 
+
+We will continue to use the same slide set from yesterday. 
+
+ 
+[Multiple Linear Regression](../../slides/Day05/Day05.pdf)
