@@ -524,18 +524,36 @@ summary(m)
 \end{frame}
 
 
-\begin{frame}[fragile]
+\begin{frame}
 \frametitle{F-test}
 When evaluating the statistical support for including a categorical variable
-with more than 2 levels, we use an F-test. \pause
-If this variable is the only variable in the model, 
-we can use 
+with more than 2 levels, we use an F-test. 
+
+\vspace{0.1in}\pause
+
+The hypotheses in an F-test are
+
+\begin{itemize}
+\item $H_0: \mu_g = \mu$ (the means in all the groups are the same)
+\item $H_1: \mu_g \ne \mu_{g'}$ for some $g,g'$ 
+(at least one mean is different)
+\end{itemize}
+\end{frame}
+
+
+
+\begin{frame}[fragile]
+\frametitle{F-test R code}
 
 <<anova-drop1>>=
 anova(m)
 drop1(m, test = "F")
 @
 \end{frame}
+
+
+
+
 
 \begin{frame}[fragile]
 \frametitle{ANOVA F-test}
@@ -552,9 +570,12 @@ anova(m0, m)
 \begin{frame}[fragile]
 \frametitle{Interpretation}
 
-<<>>=
-cbind(coef(m)[c(1,3)], confint(m)[c(1,3),]) # divide by 60 to get hours
+\vspace{-0.2in}
+
+<<division-summary>>=
+cbind(coef(m)[c(1, 3)], confint(m)[c(1, 3), ]) # divide by 60 to get hours
 summary(m)$r.squared
+anova(m)$`Pr(>F)`[1]
 @
 
 Using the 2022 Women's Lake Placid Ironman data, 
@@ -563,6 +584,8 @@ age division as the explanatory variable.
 The mean run time for the F25-29 division was 
 \Sexpr{round(coef(m)[1] / 60, 1)} hours with a 95\% interval of 
 (\Sexpr{round(confint(m)[1, 1] / 60, 1)}, \Sexpr{round(confint(m)[1, 2] / 60, 1)}).
+There is evidence of a difference in mean run time amongst the divisions
+(ANOVA F-test p=\Sexpr{round(anova(m)$`Pr(>F)`[1], 2)}).
 The estimated difference in run time for the F25-29 division minus the F35-39 
 division was
 \Sexpr{round(-coef(m)[3])} 
